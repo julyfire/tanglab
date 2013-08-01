@@ -1,0 +1,195 @@
+<?php session_start(); //must put this in the first line
+    
+     if(!$_SESSION['user'])
+			header("Location: ../index.html");
+     elseif($_POST['newform']){
+        //session_destroy();
+        //session_start();  //start a new session   
+        $temp=$_SESSION['user'];
+        $temp2=$_SESSION['level'];
+        $_SESSION = array();
+        $_SESSION['user']=$temp;
+        $_SESSION['level']=$temp2;
+    }
+?>
+<?php 
+include("template2.php");
+showHead("query plasmid"); ?>
+<style type="text/css">
+#result_list {
+	width: 660px;
+	padding: 0;
+	margin: 0;
+}
+caption {
+	padding: 0 0 5px 0;
+	width: 660px;
+	font: italic 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	text-align: right;
+}
+th {
+	font: bold 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	color: #55441d;
+	border-right: 1px solid #a6997d;
+	border-bottom: 1px solid #a6997d;
+	border-top: 1px solid #a6997d;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	text-align: left;
+	padding: 6px 6px 6px 12px;
+	background: #d4d0c8  no-repeat;
+}
+td {
+	border-right: 1px solid #a6997d;
+	border-bottom: 1px solid #a6997d;
+	background: #fff;
+	font-size:11px;
+	padding: 6px 6px 6px 12px;
+	color: #55441d;
+}
+</style>
+<?php showHeader(); ?>
+
+<?php startSidePane(); ?>
+					<li><h4>Pages</h4>
+			      <ul>
+               <li><a href="plasmid_index.php">Plasmid Page</a></li>
+					<li><a href="plasmid_search.php">Find Plasmid</a></li>
+					<?php if($_SESSION['level']==1) echo "<li><a href=\"plasmid_add.php\">Add New Plasmid </a></li>";
+							//else echo "<li><span>Add New Plasmid </span></li>";
+					?>
+				  	</ul>
+					</li>
+<?php endSidePane(); ?>
+
+<?php startMainPane(); ?>
+			    
+ 
+	 
+ 
+<!-- #############################################################################-->
+<?php
+
+if($_POST['name'] && $_POST['name']!=""){
+	$_SESSION['name']="name LIKE '%".$_POST['name']."%'";
+}
+
+if($_POST['vector'] && $_POST['vector']!=""){     
+        $_SESSION['vector']="vector LIKE '%".$_POST['vector']."%'";
+}
+
+if($_POST['gene'] && $_POST['gene']!=""){     
+        $_SESSION['gene']="gene LIKE '%".$_POST['gene']."%'";
+}
+if($_POST['host'] && $_POST['host']!=""){     
+        $_SESSION['host']="host LIKE '%".$_POST['host']."%'";
+}
+if($_POST['source'] && $_POST['source']!=""){     
+        $_SESSION['source']="source LIKE '%".$_POST['source']."%'";
+}
+if($_POST['promoter'] && $_POST['promoter']!=""){     
+        $_SESSION['promoter']="promoter LIKE '%".$_POST['promoter']."%'";
+}
+
+$resistance=$_POST['resistance']; 
+
+     if(count($resistance)>0){
+       $resis="resistance LIKE '%".$resistance[0]."%'";
+     
+       if(count($resistance)>1){ 
+          for($i=1;$i<count($resistance);$i++){
+               $resis=$resis." OR resistance LIKE '%".$resistance[$i]."%'";
+          }  
+          $resis="(".$resis.")";
+       }
+      $_SESSION['resistance']=$resis;
+}
+$site=$_POST['rec_site']; 
+
+     if(count($site)>0){
+       $recSite="rec_site LIKE '%".$site[0]."%'";
+     
+       if(count($site)>1){ 
+          for($i=1;$i<count($site);$i++){
+               $recSite=$recSite." OR rec_site LIKE '%".$site[$i]."%'";
+          }  
+          $recSite="(".$recSite.")";
+       }
+      $_SESSION['rec_site']=$recSite;
+}
+
+if(count($_SESSION)>0){
+
+   $query='';
+   foreach($_SESSION as $session){
+   	if($session==$_SESSION['user'] || $session==$_SESSION['level']) continue;
+      $query=$query." AND ".$session; 
+   }
+   $query=substr($query, 4);
+}
+if($query==""){
+	$query="1=0";
+}
+
+$errorInfo='';
+
+//connect database
+include('connDB.php');
+
+if(mysqli_connect_errno()){
+	 $errorInfo.="Error: Could not connect to database. please try again later.";
+}
+
+$sql="SELECT id,name,gene,vector,size FROM plasmid WHERE ".$query;
+//echo "SQL: ".$sql."<br>";
+
+$result=$db->query($sql);
+$num_results=$result->num_rows;;
+
+if($num_results>1)
+	echo "<header><h2><em>Find ".$num_results." entries:</em></h2></header>";
+else
+	echo "<header><h2><em>Find ".$num_results." entry:</em></h2></header>";
+?>
+<table id="result_list" summary="" >
+	<caption></caption>
+	<tr>
+	    <th scope="col">id</th>
+		 <th scope="col">name</th>
+		 <th scope="col">target</th>
+		 <th scope="col">vector</th>
+		 <th scope="col">size</th>	
+	</tr>
+<?php
+for($i=0;$i<$num_results;$i++) {
+	$row=$result->fetch_assoc(); //fetch one entry
+	$id=$row{'id'};
+	echo "<tr>\n";
+	echo "<td class='row'>".($i+1)."</td>\n";
+	foreach($row as $key=>$value){
+		if($key=='id')
+			continue;
+		elseif($key=="name")
+			echo "<td class='row'><a href='plasmid_detail.php?id=".$id."'>".$value."</a></td>\n";
+		else 
+			echo "<td class='row'>".$value."</td>\n";
+	}
+	echo "</tr>\n";
+}
+
+?>	
+</table>
+
+
+<?php
+
+	
+
+$result->free();
+$db->close();
+
+?>
+<!-- #############################################################################-->			  
+<?php endMainPane(); ?>
+
+<?php showFooter(); ?>

@@ -1,0 +1,91 @@
+<?php
+include("access.php");
+?>
+<?php 
+include("template2.php");
+showHead("find reagent"); ?>
+<style type="text/css">
+table {
+	line-height: 2;
+	width="660";
+	border="0";
+}
+th {
+	vertical-align: top;
+	width: 282px;
+}
+th em {
+	color: #F63;
+	line-height: 3;
+}
+td {
+	width: 368px;
+}
+.p_item {
+	width: 300px;
+}
+#p_add {
+	margin: 20px 0 0 450px;
+}
+</style>
+<?php showHeader(); ?>
+
+<?php startSidePane(); ?>
+					<li><h4>Pages</h4>
+			      <ul>
+			      <li><a href="reagent_index.php">Reagent Home</a></li>
+					<li><span>Find Reagent</span></li>
+					<?php if($_SESSION['level']==1) echo "<li><a href=\"reagent_add.php\">Add Reagent </a></li>";
+							//else echo "<li><span>Add Reagent </span></li>";
+					?>
+				  </ul>
+					</li>
+<?php endSidePane(); ?>
+
+<?php startMainPane(); ?>
+		      <header>
+			      <h2><a href="#">Find a reagent</a></h2>
+		        </header>
+                <form id="reagent_search_form" name="reagent_search_form" method="post" action="reagent_query.php">
+                <table>
+  					<tr>
+    					<th scope="row">Name</th>
+    					<td><label>
+    					  <input name="reagent_name" type="text" class="p_item" id="reagent_name">
+  					  </label></td>
+  					</tr>
+  					<tr>
+    					<th scope="row">CAS Number</th>
+    					<td><label>
+    					  <input name="cas_num" type="text" class="p_item" id="cas_num">
+  					  </label></td>
+  					</tr>
+  					<tr>
+    					<th scope="row">Storage Condition</th>
+    					<td><label>
+    					  <input name="storage" type="text" class="p_item" id="storage">
+  					  </label></td>
+  					</tr>
+  					<tr>
+    					<th scope="row">Classification</th>
+    					<td><label>
+    					  <input name="classification" type="text" class="p_item" id="classification">
+  					  </label></td>
+  					</tr>
+  					<tr>
+    					<th scope="row">Purchase Date</th>
+    					<td><label>
+    					  <input name="date" type="text" class="p_item" id="date">
+  					  </label></td>
+  					</tr>
+				</table>
+
+                  <div id="p_add"><span><input type="reset" value="Clear"></span>
+                	<span><input type="submit" value="Find"></span>
+                </div>
+              </form>
+                <p>&nbsp;</p>
+                
+<?php endMainPane(); ?>
+
+<?php showFooter(); ?>

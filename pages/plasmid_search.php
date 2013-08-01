@@ -1,0 +1,141 @@
+<?php
+include("access.php");
+?>
+<?php 
+include("template2.php");
+showHead("plasmid search interface"); ?>
+<style type="text/css">
+table {
+	line-height: 3;
+}
+#name{
+	width: 250px;
+}
+select {
+	width: 250px;
+}
+#p_search {
+	margin: 10px 0 0 400px;
+}
+</style>
+
+<script type="text/javascript" >
+ function checkForm(formId){
+ 	oForm = document.getElementById(formId);
+ 	oForm.submit(); 
+ }
+</script>
+<?php showHeader(); ?>
+
+<?php startSidePane(); ?>
+					<li><h4>Pages</h4>
+			      <ul>
+                  	<li><a href="plasmid_index.php">Plasmid Page</a></li>
+					<li><span>Find Plasmid</span></li>
+					<?php if($_SESSION['level']==1) echo "<li><a href=\"plasmid_add.php\">Add New Plasmid </a></li>";
+							//else echo "<li><span>Add New Plasmid </span></li>";
+					?>
+				  	</ul>
+					</li>
+<?php endSidePane(); ?>
+
+<?php startMainPane(); ?>
+			    <header>
+			      <h2>Retrieve plasmid here</h2>
+		        </header>
+                <form id="plasmid_search" name="plasmid_search" action="plasmid_query.php" method="POST">
+			    <table width="660" border="0">
+			      <tr>
+			        <th width="282" scope="row">Plasmid name</th>
+			        <td width="368"><label>
+			          <input type="text" name="name" id="name">
+			        </label></td>
+		          </tr>
+			      <tr>
+			        <th scope="row">Vector</th>
+			        <td><label>
+			          <select name="vector" id="vector">
+			            <option value=""></option>
+			            <option value="pET-11a">pET-11a</option>
+			            <option value="pET-32">pET-32</option>
+		              </select>
+			        </label></td>
+		          </tr>
+			      <tr>
+			        <th scope="row">Inserted fragment</th>
+			        <td><label>
+			          <select name="gene" id="gene">
+			            <option value=""></option>
+			            <option value="null">null</option>
+			            <option value="ubiquitin">ubiquitin</option>
+			            <option value="leptin">leptin</option>
+			            <option value="qbp">QBP</option>
+			            <option value="p6">P6</option>
+			            <option value="hpr">Hpr</option>
+			            <option value="cac-nl">CAC-NL</option>
+			            <option value="cac-p2">CAC-P2</option>
+			            <option value="tev">TEV</option>
+		              </select>
+		            </label></td>
+		          </tr>
+                  <tr>
+			        <th scope="row">Host</th>
+			        <td><label>
+			          <select name="host" id="host">
+			            <option value=""></option>
+			            <option value="Bacterial">Bacterial</option>
+			            <option value="Mammalian">Mammalian</option>
+			            <option value="Pichia pastoris">Pichia pastoris</option>
+		              </select>
+		            </label></td>
+		          </tr>
+			      <tr>
+			        <th scope="row">Source &amp; Vendor</th>
+			        <td><label>
+			          <select name="source" id="source">
+			            <option value=""></option>
+			            <option value="Invitrogen">Invitrogen</option>
+			            <option value="Clontech">Clontech</option>
+		              </select>
+		            </label></td>
+		          </tr>
+			      <tr>
+			        <th scope="row">Promoter</th>
+			        <td><label>
+			          <select name="promoter" id="promoter">
+			            <option value=""></option>
+			            <option value="AOX1">AOX1</option>
+			            <option value="CMV">CMV</option>
+		              </select>
+		            </label></td>
+		          </tr>
+			      <tr>
+			        <th scope="row">Resistance &amp; Selection</th>
+			        <td><label>
+			          <select name="resistance[]" size="2" multiple id="resistance">
+<option value="Ampicillin">Ampicillin</option>
+			            <option value="Kanamycin">Kanamycin</option>
+			            <option value="Neomycin">Neomycin</option>
+			            <option value="Zeocin">Zeocin</option>
+		              </select>
+		            </label></td>
+		          </tr>
+			      
+			      <tr>
+			        <th scope="row">Restriction Enzyme cutting site</th>
+			        <td><label>
+			          <select name="rec_site[]" size="2" multiple id="rec_site">
+			            <option value="BamH1">BamH1</option>
+			            <option value="Xho I">Xho I</option>
+		              </select>
+		            </label></td>
+		          </tr>
+		        </table>
+		        <input type="hidden" name="newform" value="restart">
+                <div id="p_search"><span><input type="Reset" value="clear"></span>
+                	<span><input type="button" name="OK" value="Search" onclick="checkForm('plasmid_search')"></span>
+                </div>
+				</form>
+<?php endMainPane(); ?>
+
+<?php showFooter(); ?>

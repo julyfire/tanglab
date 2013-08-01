@@ -1,0 +1,207 @@
+<?php
+include("access.php");
+?>
+<?php
+$errorInfo='';
+
+$fields=array('reagent_name','cas_num','storage','reagent_use','reagent_notes');
+$values='';
+foreach($fields as $field){
+	if(!get_magic_quotes_gpc()){
+		$val=addslashes($_POST[$field]);
+	}
+	if($val=='') {
+		 	$values.="null,";
+	}
+	else {
+		$values.="'".$val."',";
+	}
+}
+$values=rtrim($values,',');
+			
+//connect database
+include('connDB.php');
+
+if(mysqli_connect_errno()){
+	 $errorInfo.="Error: Could not connect to database. please try again later.";
+}
+else {
+	//get latest id
+	$sql="SELECT MAX(id) AS id FROM reagent";
+	$result=$db->query($sql);
+	$row=$result->fetch_assoc();
+	$id=$row{'id'}+1;	
+	
+	$sql="INSERT INTO reagent VALUES(".$id.",".$values.")";
+	
+	$result=$db->query($sql);
+	if($result!=1) {
+		$errorInfo.="Update database failed!<br>";
+	}
+}
+
+$rID=$id;
+
+if(!$errorInfo){
+	
+	$fields=array('date','quantity','unit','unit_price','specification','total_price','buyer','vendor');
+	$values=$rID.",";
+	foreach($fields as $field){
+		if(!get_magic_quotes_gpc()){
+			$val=addslashes($_POST[$field]);
+		}
+		if($val=='') {
+			 	$values.="null,";
+		}
+		elseif($field=='quantity' || $field=='unit_price' || $field=='total_price') {
+			$values.=$val.",";
+		}
+		else {
+			$values.="'".$val."',";
+		}
+	}
+	$values=rtrim($values,',');
+			
+	//get latest id
+	$sql="SELECT MAX(id) AS id FROM reagent_buy_log";
+	$result=$db->query($sql);
+	$row=$result->fetch_assoc();
+	$id=$row{'id'}+1;	
+	
+	$sql="INSERT INTO reagent_buy_log VALUES(".$id.",".$values.")";
+	
+	$result=$db->query($sql);
+	if($result!=1) {
+		$errorInfo.="Update database failed!<br>";
+	}
+}
+
+?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/php; charset=UTF-8">
+<title>TangLab--</title>                  
+
+<meta charset="utf-8">
+<meta name="description" content="Handcrafted pixels and text by Dan Cederholm.">
+<meta name="author" content="weibo" >
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+
+<link rel="shortcut icon" type="image/ico" href="../img/icon.png"> <!--small icon on tag -->
+<link rel="stylesheet" href="../css/overall2.css"></link>
+
+<!--<link rel="stylesheet" href="../css/hover.css"></link>-->
+<style type="text/css">
+table {
+	line-height: 2;
+	width="660";
+	border="0";
+}
+th {
+	vertical-align: top;
+	width: 282px;
+}
+th em {
+	color: #F63;
+	line-height: 3;
+}
+td {
+	width: 368px;
+}
+.p_item {
+	width: 300px;
+}
+#p_add {
+	margin: 20px 0 0 450px;
+}
+</style>
+<link href="../css/1MKCHPG-e.css" rel="stylesheet">
+
+
+<!-- enable HTML5 elements in IE7+8 -->
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+
+<script type="text/javascript" src="../js/1MKCHPG.js"></script>
+<script type="text/javascript" src="../js/jquery-1.js"></script>
+<!--<script type="text/javascript" src="../js/nicetitle.js"></script>-->
+</head>
+
+<body class="home blog">
+
+	<div id="wrap">
+
+			<div id="header"><!-- header: logo and navigation -->
+				<div id="over">
+			
+				<div id="logo">
+					<a href="#"><img src="../img/logo.png" alt="nmr"></a>
+				</div><!-- logo -->
+				<div id="web_title">TANG BIOMOLECULAR NMR GROUP</div>
+				<div id="info">
+					<?php include('log_info.php'); ?>
+				<div id="go">
+					<form>
+						<input type="text" class="text" name="keyword" value="find articals" onblur="if(!this.value) {this.value='find articals';this.style.color='#b2b2b2';}" onfocus="if(this.value=='find articals')this.value='';this.style.color='#ecd67a'">
+						<input type="submit" class="submit" value="Go">
+					</form>
+				</div>
+				</div><!-- end of info-->
+				</div><!--end of over-->
+	
+				<div id="navigation">
+					<ul class="group">
+						<li id="home" class="active"><a href="index.php"><strong>Home</strong></a></li>
+						<li id="vector"><a href="plasmid_index.php"><strong>Plasmid</strong></a></li>
+						<li id="protocol"><a href="protocol_index.php"><strong>Protocol</strong></a></li>
+						<li id="reagent"><a href="reagent_index.php"><strong>Reagent </strong></a></li>
+					</ul>
+				</div> <!-- navigation -->
+			</div> <!-- header -->
+
+			
+              
+		  <div id="main" role="main">
+			  <div id="aside">
+			      <ul class="list_1">
+			      <li><a href="reagent_index.php">Reagent Home</a></li>
+					<li><a href="reagent_find.php">Find Reagent</a></li>
+					<li><span>Add Reagent </span></li>
+				  </ul>
+		     </div>
+			  <!-- aside  -->
+		    <div id="content">
+		    <?php 
+		    	if(!$errorInfo) 
+		    		header("Location: reagent_detail.php?id=".$rID);
+		    	else{
+		    		echo "<header><h2>Add new reagent failed!</h2></header>\n";
+		    		echo $errorInfo;
+		    		echo '<p>&nbsp;</p><p style="text-align:center;"><br /><input type="button" value="back to submit again" onclick="javascript:history.back();" /></p>';
+		    	}
+		    		
+		    ?>
+ 
+		      </div>
+			  <!-- content -->
+		  </div>
+			<!-- main -->
+			
+	</div> <!--wrap -->
+		
+		
+
+<div id="footer">
+		<p>Biomolecular NMR Group, WIPM, CAS © 2010</p>
+		<p id="footer-logo"><a href="#"><img src="../img/logo_black.png" alt="nmr"></a></p>
+	</div>
+
+
+
+<!-- c(~) -->
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+#wbc_online {
+	margin-bottom: 10px! important;
+}
+#wbc_online UL {
+	clear: both;
+	padding-right: 0px;
+	padding-left: 0px;
+	float: none;
+	padding-bottom: 0px;
+	margin: 2px 0px;
+	width: 100%;
+	padding-top: 0px;
+	list-style-type: none
+}
+#wbc_online UL LI {
+	font-size: 12px;
+	float: left;
+	margin: 3px;
+	width: 20%
+}
+BODY DIV#toolTip {
+	padding-right: 5px;
+	padding-left: 5px;
+	min-height: 1em;
+	padding-bottom: 5px;
+	width: auto;
+	padding-top: 5px;
+	position: absolute;
+	text-align: left;
+	-moz-border-radius: 5px;
+	background: #218BBC
+}
+BODY DIV#toolTip P {
+	padding-right: 0px;
+	padding-left: 0px;
+	padding-bottom: 0px;
+	margin: 0px;
+	font: 11px verdana,arial,sans-serif;
+	color: #fff;
+	padding-top: 0px;
+	background: #218BBC
+}
+BODY DIV#toolTip P EM{
+	margin-top: 3px;
+	display: block;
+	font-weight: bold;
+	color: #fff;
+	font-style: normal;
+	background: #218BBC
+}
+BODY DIV#toolTip P EM SPAN{
+	font: 9px verdana,arial,sans-serif;
+	color: #fff;
+	background: #218BBC
+}

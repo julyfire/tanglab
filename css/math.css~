@@ -1,0 +1,57 @@
+/*======source: http://www.myphysicslab.com/web_math.html===========*/
+
+/* give images a smaller centered font for picture captions */
+body div.image { float: left; margin:0; text-align: center; 
+	font-size: x-small; font-family: sans-serif; }
+
+/* for centered images */
+div.centered_image { margin:0.5em 0; text-align: center; 
+	font-size: x-small; font-family: sans-serif; }
+	
+/* inline equations */
+span.inline_eqn { white-space: nowrap; }  
+
+/* display equations appear on their own line.  */
+/* (note: don't use display:block on tables, it screws up NN tables) */
+span.display_eqn { display: block; }
+.fraction, .display_eqn, .centered { margin-top:0.5em; margin-bottom:0.5em; }
+.fraction, .display_eqn, table.inline_frac, .centered { text-align: center; vertical-align: middle; }
+
+/* inline fraction table */
+table.inline_frac { display:inline; margin-top:0; margin-bottom:0;
+			text-align: center; vertical-align: middle; }
+
+/* bigger line-height helps make eqns without ^2 more equal to those with ^2 */
+.display_eqn, table.num_eqn { line-height: 2em; }
+.fraction { line-height: normal; }  /* for when fraction is wrapped by num_eqn */
+
+/* numbered equations done with a table */
+/* width slightly less than 100% because of bugs in IE when alongside an image
+   see dbl_pendulum page. */
+table.num_eqn {width:99%;  text-align: center; vertical-align: middle;
+    margin-top:0.5em; margin-bottom:0.5em; }
+
+ul.vars {list-style-type:none; margin-top:0.5em; margin-bottom:0.5em;}
+
+/* sup style needed for Opera (why?) */
+sup { vertical-align: 0.8ex; font-size:50%; }
+sub { vertical-align: -0.6ex; font-size:50%; }
+span.bigg { font-size:150%; }
+
+span.over {text-decoration:overline;}  /* for vectors */
+
+span.nobr { white-space:nowrap; }  /* for setting where to break long equations */
+
+td.upper_line { border-top:solid 1px black; } /* for horiz line in fractions */
+
+td.eqn_blank { text-align:left; width:2em; } /* for left side of equation numbers */
+td.eqn_number { text-align:right; width:2em; } /* for equation numbers */
+
+.emphasized {  border: solid 2px #f90; }
+div.emphasized {margin: 0.5em 0; padding: 0.5em; text-align: center; border: solid 2px #f90; }
+/* background-color: rgb(90%,90%,100%); */
+
+span.text { font-size:90%; }  /* smaller text within math expressions */
+
+p.link {font-family:sans-serif; font-size:8pt;}
+p.list {margin-top:0cm; margin-bottom:0cm; margin-left:1cm;}

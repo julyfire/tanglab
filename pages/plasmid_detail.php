@@ -1,0 +1,240 @@
+<?php
+include("access.php");
+?>
+<?php
+$id=$_GET['id'];
+?>
+<?php 
+include("template2.php");
+showHead("plasmid detail information"); ?>
+
+<style type="text/css">
+table {
+	width: 660px;
+	padding: 0;
+	margin: 0;
+}
+th {
+	font: bold 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	color: #55441d;
+	border-right: 1px solid #a6997d;
+	border-bottom: 1px solid #a6997d;
+	border-top: 1px solid #a6997d;
+	letter-spacing: 1px;
+	text-align: left;
+	padding: 6px 6px 6px 12px;
+	background: #d4d0c8  no-repeat;
+	width: 210px;
+}
+td {
+	border-right: 1px solid #a6997d;
+	border-bottom: 1px solid #a6997d;
+	background: #fff;
+	font: 11px "DejaVu Sans Mono", "Courier New", Courier;
+	padding: 6px 6px 6px 12px;
+	color: #55441d;
+}
+#map {	
+	float: left;
+	width: 658px;
+	padding: 0;
+	margin: 0;
+	border:1px solid #a6997d;
+	}
+.field {
+	min-width: 20px;
+	min-height: 10px;
+}
+
+#notice_info {
+	text-align: right;
+	font-size: 0.8em;
+	border-bottom: 1px dotted rgba(252, 107, 53, 0.5);
+	margin: 20px 0 20px 0;
+}
+#notice_info span {
+	text_align: right;
+	margin: 2px 5px;
+}
+</style>
+<?php
+echo "<script type=\"text/javascript\">";
+echo "var toggle=0;";
+if($_SESSION['level']==1) 
+	echo "toggle=1;";
+echo "</script>";
+?>
+<script type="text/javascript" >
+var flag=0;
+function edit(o){
+	if(toggle==0) return;
+	if(flag==1) return;
+	flag=1;
+	
+	var text=o.innerHTML;
+	text=text.replace(/\'/g,"\\&#39;");
+	text=text.replace(/\"/g,"\\&quot;");
+
+	var keyword=o.id.substr(6);
+	
+	var html="<form id='updateform' method='post' enctype='multipart/form-data' action='plasmid_update.php'>";
+
+	if(o.id.indexOf('map')!=-1)
+		html+="<input type='file' name='newvalue' id='newvalue'>";
+	else if(o.id.indexOf('viral')!=-1)
+		html+="<label><input type='radio' name='newvalue' id='newvalue_0' value='viral'>viral</label><label><input type='radio' name='newvalue' id='newvalue_1' value='nonviral'>non-viral</label>";
+	else if(o.id.indexOf('stable')!=-1)
+		html+="<label><input type='radio' name='newvalue' id='newvalue_0' value='stable'>stable</label><label><input type='radio' name='newvalue' id='newvalue_1' value='transient'>transient</label>";
+	else if(o.id.indexOf('constitutive')!=-1)
+		html+="<label><input type='radio' name='newvalue' id='newvalue_0' value='constitutive'>constitutive</label><label><input type='radio' name='newvalue' id='newvalue_1' value='inducible'>inducible</label>";
+	else if(o.id.indexOf('seq')==-1)
+		html+="<input type='text' id='newvalue' name='newvalue' value='"+text+"' />";
+	else
+		html+="<textarea id='newvalue' name='newvalue'>"+text+"</textarea>";
+
+	html+="<input type='hidden' name='keyword' value='"+keyword+"'><input type='hidden' name='id' value='<?php echo $id; ?>'><input type='button' value='ok' onclick='update(\""+o.id+"\")'><input type='button' value='give up' onclick='restore(\""+text+"\",\""+o.id+"\")'></form>";
+	o.innerHTML=html;
+}
+function update(oo){
+	var oo=document.getElementById(oo); //div
+	var fm=document.getElementById('updateform'); //form
+	var ch=fm.newvalue; //input
+
+	fm.target="rfFrame";
+	//fm.target="_blank";
+	fm.submit();
+
+	//alert(ch.type);
+	if(!ch.type){
+		for(i=0;i<ch.length;i++)
+			if(ch[i].checked)
+				oo.innerHTML=ch[i].value;
+	}	
+	else if(ch.type=='textarea'){
+		var after=ch.value;
+		after=after.replace("&lt;br&gt;","");//remove <br>
+		//display seq every 60 per line
+		var seq='';
+		var i=0;
+		var len=10;
+		for(i=0;i<after.length-len;i+=len)
+			seq+=after.substr(i,len)+"<br>";
+		seq+=after.substr(i);
+		
+		oo.innerHTML=seq;
+	}
+	else if(ch.type=='text')
+		oo.innerHTML=ch.value;		
+	else{ 							//type=file
+		oo.innerHTML="press F5 to see the change";		
+		//var iObj = rfFrame.window;
+		//oo.innerHTML="<img src='"+iObj.document.getElementById('path').innerHTML+"'>"; 
+
+		//sleep(1000);
+		//window.location.reload(true);
+	}
+	
+	flag=0;
+}
+function restore(c,id){
+	var o=document.getElementById(id);
+	o.innerHTML=c;
+	flag=0;
+}
+
+function sleep(n){ // n:毫秒
+    var start=new Date().getTime();
+    while(true) if(new Date().getTime()-start > n) break;
+}
+
+</script>
+<?php showHeader(); ?>
+
+<?php startSidePane(); ?>
+					<li><h4>Pages</h4>
+			      <ul>
+               <li><a href="plasmid_index.php">Plasmid Page</a></li>
+					<li><a href="plasmid_search.php">Find Plasmid</a></li>
+					<?php if($_SESSION['level']==1) echo "<li><a href=\"plasmid_add.php\">Add New Plasmid </a></li>";
+							//else echo "<li><span>Add New Plasmid </span></li>";
+					?>
+				  </ul>
+				  </li>
+<?php endSidePane(); ?>
+
+<?php startMainPane(); ?>
+
+<?php
+// 连接到数据库
+//connect database
+include('connDB.php');
+if(mysqli_connect_errno()){
+	 echo "Error: Could not connect to database. please try again later.";
+	 exit;
+}
+$sql="SELECT * FROM plasmid WHERE id='".$id."'";
+//echo "SQL: ".$sql."<br>";
+$result=$db->query($sql);
+$row=$result->fetch_assoc(); //fetch one entry
+?>
+
+			    <header>
+			      <h2>Detail information of plasmids <em><?php echo $row{'name'}; ?></em></h2>
+		        </header>
+		        <?php if($_SESSION['level']==1){ 
+		        	echo "<div id=\"notice_info\">\n";
+		        	echo "	<span><a href='#' onclick='javascript:alert(\"Tips: double clicking one entry can edit it\")'>edit</a></span>\n";
+					echo "	<span><a href=\"plasmid_delete.php?id=".$id."\" onclick='return window.confirm(\"Are you sure to delete this entry?\")'>delete</a></span>\n";
+		        	echo "</div>\n";
+		        	}
+		        ?>
+
+<?php
+
+
+$item=array("name"=>"Name","source"=>"Source/Vendor","host"=>"Host",
+				"size"=>"Size","viral_nonviral"=>"Viral/Non-Viral",
+				"stable_transient"=>"Stable/Transient",
+				"constitutive_inducible"=>"Constitutive/Inducible",
+				"promoter"=>"Promoter","protein_tags"=>"Protein tags",
+				"resistance"=>"Resistance/Selection",
+				"rec_site"=>"Restriction endonuclease sites",
+				"primer"=>"Sequencing primer","primer_seq"=>"Primer sequence",
+				"gene"=>"Insert fragment","gene_seq"=>"Target sequence",
+				"vector"=>"Vector","vector_seq"=>"Vector sequence",
+				"plasmid_seq"=>"Plasmid sequence","notes"=>"Notes");
+				
+
+
+echo "<table summary=''>";
+foreach($item as $key=>$value){
+	if($key=='id') continue;
+	echo "<tr>";
+	//print sequences, each line 60 letters
+	if(stripos($value,"seq")) {
+		$p=str_split($row{$key},60);
+		echo "<th scope='col'>".$value."</th><td>";
+		echo "<div class='field' id='field_".$key."' ondblclick='edit(this)'>";
+			
+		$seq='';
+		foreach($p as $line){
+			$seq.=$line."<br>";
+		}
+		$seq=rtrim($seq, '<br>');
+		echo $seq;
+		echo "</div></td>";
+	}
+	else {
+		echo "<th scope='col'>".$value."</th><td><div class='field' id='field_".$key."' ondblclick='edit(this)'>".$row{$key}." </div></td>";
+	}
+	echo "</tr>\n";
+}
+echo "</table>";
+echo "<div id='field_map' ondblclick='edit(this)'><img id='map' src='".$row{"map"}."' alt='map'></div>";
+
+?>
+<?php endMainPane(); ?>
+
+<?php showFooter(); ?>	
+
+ <iframe id="rfFrame" name="rfFrame" width="1px" height="1px" style="display:none" src="inner.html"></iframe>	
